@@ -4,6 +4,7 @@ import discord
 import socket
 from discord.utils import get
 import royaleapi
+import os
 
 client=commands.Bot(intents = discord.Intents.all(),command_prefix = '-')
 
