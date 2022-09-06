@@ -2,3 +2,4 @@ discord
 pandas
 opencv-python
 urllib3
+requests_html
