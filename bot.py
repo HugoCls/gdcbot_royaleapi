@@ -57,7 +57,7 @@ async def Hello(ctx):
    # await ctx.message.delete()
 
 @client.command()
-async def gdc(ctx):
+async def ping(ctx):
     L,clan_dict,medals,day=royaleapi.player_attacks()
     p=sum(len(L[i]) for i in range(4))
     
@@ -78,12 +78,12 @@ async def gdc(ctx):
         if len(L[i])>=1:
             attacks="Attack"
             if i>=2:
-                attacks+="s"
+                attacks=attacks+"s"
             embed.add_field(name=f"**"+str(i+1)+" "+attacks+"**", value='•'+'\n•'.join(L[i]), inline=False)
     
     await ctx.reply(embed=embed,mention_author=False)
     await ctx.message.delete()
-
+"""
 @client.command()
 async def ping(ctx):
     sentence1='| '
@@ -97,7 +97,7 @@ async def ping(ctx):
     sentence=sentence1+sentence2+'\nIl vous reste des combats!'
     await ctx.reply(sentence)
     await ctx.message.delete()
-    
+"""
 @client.command()
 async def check_disc(ctx):
     afk_players,clan_dict,medals,deck=royaleapi.get_players()
