@@ -65,6 +65,7 @@ async def ping(ctx):
     embed = discord.Embed(title="War | "+str(day), colour=discord.Colour(0x3e038c))
     print(3)
     #embed.set_thumbnail(url=ctx.author.avatar_url)
+    embed.set_author(icon_url=ctx.author.avatar_url)
     print(3.1)
     L_stats=["<:sign:913172154269442048> Ultimate FR",
     "<:medals:1017445552859906148> "+str(medals),
