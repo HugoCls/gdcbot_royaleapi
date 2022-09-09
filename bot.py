@@ -62,7 +62,7 @@ async def ping(ctx):
     L,clan_dict,medals,day=royaleapi.player_attacks()
     p=sum(len(L[i]) for i in range(4))
     print(2)
-    embed = discord.Embed(title="War | "+str(day), colour=discord.Colour(0x3e038c),_provider='test')
+    embed = discord.Embed(title="War | "+str(day), colour=discord.Colour(0x3e038c))
     print(3)
     embed.set_thumbnail(url=ctx.author.avatar_url)
     L_stats=["<:sign:913172154269442048> Ultimate FR",
