@@ -58,46 +58,31 @@ async def Hello(ctx):
 
 @client.command()
 async def ping(ctx):
+    print(1)
     L,clan_dict,medals,day=royaleapi.player_attacks()
     p=sum(len(L[i]) for i in range(4))
-    
+    print(2)
     embed = discord.Embed(title="War | "+str(day), colour=discord.Colour(0x3e038c),_provider='test')
-    
+    print(3)
     embed.set_thumbnail(url=ctx.author.avatar_url)
     L_stats=["<:sign:913172154269442048> Ultimate FR",
     "<:medals:1017445552859906148> "+str(medals),
     "<:decksremaining:1017445543108165713> "+str(p),
-    "<:slots:1017445562779435169> "+str(len(L[3]))]
-    
-    #adding slots 
-    
+    "<:slots:1017445562779435169> "+str(len(L[3]))] 
+    print(4)
     embed.add_field(name=f"**Remaining Attacks**", value='\n'.join(L_stats), inline=False)
     
-    
+    print(5)
     for i in range(len(L)):
         if len(L[i])>=1:
             attacks="Attack"
             if i>=2:
                 attacks=attacks+"s"
             embed.add_field(name=f"**"+str(i+1)+" "+attacks+"**", value='•'+'\n•'.join(L[i]), inline=False)
-    
+    print(6)
     await ctx.reply(embed=embed,mention_author=False)
     await ctx.message.delete()
-"""
-@client.command()
-async def ping(ctx):
-    sentence1='| '
-    sentence2=''
-    afk_players,clan_dict,medals,day=royaleapi.get_players()
-    for (player,remaining_attacks) in afk_players:
-        if player in clan_dict.keys():
-            sentence1+=clan_dict[player]['name']+' | '
-            if clan_dict[player]['discord']!='':
-                sentence2+=' <@'+str(clan_dict[player]["discord"])+'> '
-    sentence=sentence1+sentence2+'\nIl vous reste des combats!'
-    await ctx.reply(sentence)
-    await ctx.message.delete()
-"""
+
 @client.command()
 async def check_disc(ctx):
     afk_players,clan_dict,medals,deck=royaleapi.get_players()
