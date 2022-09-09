@@ -62,7 +62,7 @@ async def ping(ctx):
     p=sum(len(L[i]) for i in range(4))
     embed = discord.Embed(title="War | "+str(day), colour=discord.Colour(0x3e038c))
     #embed.set_thumbnail(url=ctx.author.avatar_url)
-    embed.set_author(name='',icon_url=ctx.author.avatar_url)
+    #embed.set_author(name='',icon_url=ctx.author.avatar_url)
     L_stats=["<:sign:913172154269442048> Ultimate FR",
     "<:medals:1017445552859906148> "+str(medals),
     "<:decksremaining:1017445543108165713> "+str(p),
