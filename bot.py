@@ -20,47 +20,68 @@ async def on_command_error(ctx, error):
 @client.command()
 async def cr_id(ctx,user_cr_id,user_disc_id=None):
     user_cr_id=royaleapi.nice_format(user_cr_id)
+    
     if len(user_cr_id)>10:
         await ctx.reply('Wrong CR-id, sorry mate.')
     else:
         if user_disc_id==None:
             user_disc_id=str(ctx.author.id)
-        
         df = pd.read_csv('clan.csv')
-        
-        afk_players,clan_dict=royaleapi.get_players()
+
+        afk_players,clan_dict,medals,day=royaleapi.get_players()
         
         ids=clan_dict.keys()
-        
+
         user_name='unspecified'
         if user_cr_id in ids:
             user_name=clan_dict[user_cr_id]['name']
 
-        df2 = pd.DataFrame(list(zip([user_cr_id],[user_name], [user_disc_id])), columns =['CR id','Name','Discord'])
-        
-        df=df.append(df2,ignore_index=True)
-        df.to_csv('clan.csv', encoding='utf-8')
-        
-        await ctx.reply(user_name+':<@'+str(user_disc_id)+'>, saved.')
+        if user_cr_id in list(df['CR id']):
+            user_index=df.loc[df['CR id']==user_cr_id].index[0]
+            line=df.iloc[user_index]
+            df=df.replace(line['Discord'],user_disc_id)
+            df.to_csv('clan.csv', encoding='utf-8')
+
+            await ctx.reply(user_name+':'+user_cr_id+':<@'+str(user_disc_id)+'>, replaced.')
+        else:
+            df2 = pd.DataFrame(list(zip([user_cr_id],[user_name], [user_disc_id])), columns =['CR id','Name','Discord'])
+
+            df=df.append(df2,ignore_index=True)
+            df.to_csv('clan.csv', encoding='utf-8')
+
+            await ctx.reply(user_name+':'+user_cr_id+':<@'+str(user_disc_id)+'>, saved.')
     await ctx.message.delete()
 
 @client.command()
 async def clear(ctx):
     await ctx.message.delete()
     await ctx.channel.purge(limit=100)
+    
+@client.command()
+async def get_members(ctx):
+    members=ctx.message.guild.members
+    ids=[]
+    for member in members:
+        ids.append(member.id)
+    print(ids)
 
 @client.command()
 async def Hello(ctx):
     user = get(client.get_all_members(), id=ctx.author.id)
     username='*'+user.name+'* '
-    await ctx.reply('Hello there.',mention_author=False)
-   # await ctx.message.delete()
+
+    await ctx.reply('Hello there.')
+    await ctx.message.delete()
+
 
 @client.command()
 async def ping(ctx):
     L,clan_dict,medals,day=royaleapi.player_attacks()
+
     p=sum(len(L[i]) for i in range(4))
     embed = discord.Embed(title="War | "+str(day), colour=discord.Colour(0x3e038c))
+    
+
     #embed.set_thumbnail(url=ctx.author.avatar_url)
     #embed.set_author(name='',icon_url=ctx.author.avatar_url)
     L_stats=["<:sign:913172154269442048> Ultimate FR",
@@ -79,8 +100,17 @@ async def ping(ctx):
     await ctx.message.delete()
 
 @client.command()
-async def check_disc(ctx):
+async def check_disc(ctx,discord_id=None):
     afk_players,clan_dict,medals,deck=royaleapi.get_players()
+    if discord_id!=None:
+        players=clan_dict.keys()
+        for player in players:
+            if clan_dict[player]['discord']==discord_id:
+                await ctx.reply(clan_dict[player]['name']+', est assigné à ce discord.')
+                await ctx.message.delete()
+                return(None)
+        await ctx.reply('<@'+discord_id+"> n'a pas de compte CR associé.")
+        await ctx.message.delete()
     cr_ids=clan_dict.keys()
     df=pd.read_csv('clan.csv')
     sentence=''
@@ -99,45 +129,38 @@ async def check_disc(ctx):
     else:
         sentence='Tous les joueurs ont leur discord renseigné.'
 
-    await ctx.reply(sentence)
-    await ctx.message.delete()
+    sentence2='\n'
     
-def get_ip():
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.settimeout(0)
-    try:
-        # doesn't even have to be reachable
-        s.connect(('10.254.254.254', 1))
-        IP = s.getsockname()[0]
-    except Exception:
-        IP = '127.0.0.1'
-    finally:
-        s.close()
-    return IP
+    count=0
+    members=ctx.message.guild.members
+    discord_ids=[]
+    for member in members:
+        discord_ids.append(member.id)
     
-@client.command(pass_context=True)
-async def getguild(ctx):
-    hn = socket.gethostname()
-    ip_address = socket.gethostbyname(hn)
-    print(f"IP Address: {ip_address}")
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(("8.8.8.8", 80))
-    f=str(s.getsockname()[0])
-    s.close()
-    hn=str(socket.getfqdn())
-    hn2=socket.gethostbyname(hn)
-    
-    ip4=get_ip()
-    await ctx.reply('ip1: '+ip_address+' ip2: '+f+' ip3: '+hn2+' ip4: '+ip4)
+    players=clan_dict.keys()
+    for player in players:
+        if clan_dict[player]['discord']!='' and clan_dict[player]['discord'] not in discord_ids:
+            sentence2+=clan_dict[player]['name']+', '
+            count+=1
+
+    if sentence2!='\n':
+        if count<=1:
+            sentence2+='a un mauvais discord renseigné.'
+        else:
+            sentence2+="ont un mauvais discord renseigné."
+        await ctx.reply(sentence+sentence2)
+    else:
+        await ctx.reply(sentence)
     await ctx.message.delete()
 
 def read_token():
     with open('token.txt','r') as f:
         lines=f.readlines()
         return(lines[0].strip())
-"""
+
 TOKEN=read_token()
 
 client.run(TOKEN)
 """
 client.run(os.environ['DISCORD_TOKEN'])
+"""

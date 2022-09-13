@@ -25,12 +25,14 @@ def get_players(r=get_session()):
         attacks=player.find_all('div',class_='value_bg decks_used_today')[0].get_text().strip('\n')
         
         cr_id='#'+player.find_all('a',href=True)[0]['href'].strip('/player/').strip('/battles')
-           
+          
+        statut=player.find_all('div',class_='player_role')[0].get_text().strip('\n')
         #print(name,':',cr_id,':',attacks)
-        clan_dict[cr_id]={"name":name,"discord":""}
-        
-        if int(attacks)<4:
-            afk_players.append((cr_id,4-int(attacks)))
+        if statut!="--":
+            clan_dict[cr_id]={"name":name,"discord":""}
+            
+            if int(attacks)<4:
+                afk_players.append((cr_id,4-int(attacks)))
     clan_dict=add_discords(clan_dict)
     return(afk_players,clan_dict,medals,day)
 
