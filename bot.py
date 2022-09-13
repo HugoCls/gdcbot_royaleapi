@@ -91,6 +91,9 @@ async def ping(ctx):
     embed.add_field(name=f"**Remaining Attacks**", value='\n'.join(L_stats), inline=False)
     
     for i in range(len(L)):
+        L[i]=list(set(L[i]))
+        
+    for i in range(len(L)):
         if len(L[i])>=1:
             attacks="Attack"
             if i>=2:
