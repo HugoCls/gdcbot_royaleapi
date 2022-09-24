@@ -78,7 +78,7 @@ async def Hello(ctx):
 async def ping(ctx):
     L,clan_dict,medals,day=royaleapi.player_attacks()
 
-    p=sum(len(L[i]) for i in range(4))
+    p=sum((i+1)*len(L[i]) for i in range(4))
     embed = discord.Embed(title="War | "+str(day), colour=discord.Colour(0x3e038c))
     
 
